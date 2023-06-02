@@ -76,7 +76,7 @@ result_path = 'D:/Python_Projects/self_driving_car/nuscenes-devkit/python-sdk/nu
 original_height = data['original_shape'][0]
 collated_data = collate_fn([data])
 height = collated_data[0].shape[2]
-print(type(transformed_P2))
+#print(type(transformed_P2))
 with torch.no_grad():           
     scores, bbox, obj_names = test_mono_detection(collated_data, detector, None, cfg=cfg)
     bbox_2d = bbox[:, 0:4]
@@ -84,18 +84,18 @@ with torch.no_grad():
     bbox_3d_state[:, 2] *= 1.0
     bbox_3d_state_3d = backprojector(bbox_3d_state, transformed_P2) #[x, y, z, w,h ,l, alpha]
     abs_bbox, bbox_3d_corner_homo, thetas = projector(bbox_3d_state_3d, bbox_3d_state_3d.new(transformed_P2))
-    original_P = data['original_P']
-    scale_x = original_P[0, 0] / transformed_P2[0, 0]
-    scale_y = original_P[1, 1] / transformed_P2[1, 1]          
-    shift_left = original_P[0, 2] / scale_x - transformed_P2[0, 2]
-    shift_top  = original_P[1, 2] / scale_y - transformed_P2[1, 2]
-    bbox_2d[:, 0:4:2] += shift_left
-    bbox_2d[:, 1:4:2] += shift_top
-    bbox_2d[:, 0:4:2] *= scale_x
-    bbox_2d[:, 1:4:2] *= scale_y
-    bbox_2d = bbox_2d.cpu().numpy()
-    bbox_3d_state_3d = bbox_3d_state_3d.cpu().numpy()
-    thetas = thetas.cpu().numpy()
+    # original_P = data['original_P']
+    # scale_x = original_P[0, 0] / transformed_P2[0, 0]
+    # scale_y = original_P[1, 1] / transformed_P2[1, 1]          
+    # shift_left = original_P[0, 2] / scale_x - transformed_P2[0, 2]
+    # shift_top  = original_P[1, 2] / scale_y - transformed_P2[1, 2]
+    # bbox_2d[:, 0:4:2] += shift_left
+    # bbox_2d[:, 1:4:2] += shift_top
+    # bbox_2d[:, 0:4:2] *= scale_x
+    # bbox_2d[:, 1:4:2] *= scale_y
+    # bbox_2d = bbox_2d.cpu().numpy()
+    # bbox_3d_state_3d = bbox_3d_state_3d.cpu().numpy()
+    # thetas = thetas.cpu().numpy()
     objects = []
     N = len(bbox)
     for i in range(N):

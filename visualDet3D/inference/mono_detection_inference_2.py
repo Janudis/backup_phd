@@ -96,9 +96,13 @@ with torch.no_grad():
         obj['xyz'] = bbox_3d_state_3d[i, 0:3]
         objects.append(obj)
 #print(objects)
+# [{'whl': tensor([1.6292, 1.5660, 4.5354], device='cuda:0'), 'theta': tensor(-0.2489, device='cuda:0'), 
+# 'score': tensor(0.9961, device='cuda:0'), 'type_name': 'Car', 'xyz': tensor([-9.1681,  0.9484, 18.3366], device='cuda:0')}, 
+# {'whl': tensor([1.7288, 1.6186, 4.1517], device='cuda:0'), 'theta': tensor(0.7109, device='cuda:0'), 'score': tensor(0.9540, device='cuda:0'), 
+# 'type_name': 'Car', 'xyz': tensor([-8.2275,  0.7891, 
+# 11.9172], device='cuda:0')}]
 
-# from scipy.spatial.transform import Rotation
-
+# from scipy.spatial.transform import Rotation 
 # whl = objects[0]['whl']
 # xyz = objects[0]['xyz']
 # theta = objects[0]['theta']
@@ -188,7 +192,6 @@ with torch.no_grad():
 #  [ -0.          -0.         -13.80119133  18.33657837]
 #  [  0.           0.           0.           1.        ]]
 
-
 # # Start with an identity matrix
 # Qn = np.eye(4)
 
@@ -221,30 +224,41 @@ with torch.no_grad():
 #  [ 0.          0.          0.          1.        ]]
 
 nusc_dataset = NuscenesDataset(nusc)
- 
+
+dn = objects[0]['whl'].cpu().numpy()
+xyz = objects[0]['xyz'].cpu().numpy()
+theta = objects[0]['theta'].cpu().numpy()
+
 points, lidar_points = nusc_dataset.get_points(0)
 lidar_point = np.array([ lidar_points[0][0], lidar_points[1][0], lidar_points[2][0] ])
-z_local = objects[0]['xyz'].cpu().numpy() - lidar_point
-print("bb", objects[0]['xyz'].cpu().numpy())
-print("lidar", lidar_point)
-print(z_local)
+# print("bb", objects[0]['xyz'].cpu().numpy())
+# print("lidar", lidar_point)
 # print(points[0][0])
 # print(points[0][1])
 # print(points[0][2])
+
+z_local = xyz - lidar_point
+#print(z_local)
+z_dim = dn
+#print(z_dim)
+if(objects[0]['type_name']=='Car'):
+    z_class = 1
+else:
+    z_class = 0
+#print(z_class)
+z_dim = z_dim.reshape(1, 3)
+z_local = z_local.reshape(1, 3)
+# Concatenate the arrays horizontally
+z = np.concatenate((z_local, z_dim, np.array([[z_class]])), axis=1)
+print(z)
+
 # lidar_point_homog = np.append(lidar_point, 1)
 # # Multiply x_homog by Qn_inv
 # z_local_homog = np.dot(Qn_inv, lidar_point_homog)
 # # Convert x_local_homog back to 3D coordinates
 # z_local = z_local_homog[:3] / z_local_homog[3]
 
-# z_dim = dn
-# z_class = objects[0]['type_name']
 
-# z_dim = z_dim.reshape(1, 3)
-# z_local = z_local.reshape(1, 3)
-# # Concatenate the arrays horizontally
-# z = np.concatenate((z_local, z_dim, np.array([[z_class]])), axis=1)
-# print(z)
 
 
 

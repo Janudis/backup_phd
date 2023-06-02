@@ -1002,7 +1002,7 @@ class NuScenesExplorer:
         mask = np.logical_and(mask, points[1, :] < img.size[1] - 1)
         points = points[:, mask]
         coloring = coloring[mask]
-        
+        #return projected_points, , , 3D points
         return points, coloring, img, pc.points[:3, :]
 
     def render_pointcloud_in_3d(self,
