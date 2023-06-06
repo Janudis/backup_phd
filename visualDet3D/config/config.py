@@ -77,19 +77,22 @@ cfg.scheduler = scheduler
 data = edict(
     batch_size = 8,
     num_workers = 8,
-    rgb_shape = (288, 1280, 3),
-    train_dataset = "KittiMonoDataset",
-    val_dataset   = "KittiMonoDataset",
-    test_dataset  = "KittiMonoTestDataset",
-    train_split_file = os.path.join(cfg.path.visualDet3D_path, 'data', 'kitti', 'chen_split', 'train.txt'),
-    val_split_file   = os.path.join(cfg.path.visualDet3D_path, 'data', 'kitti', 'chen_split', 'val.txt'),
+    #rgb_shape = (288, 1280, 3), # KITTI:(375, 1242)->(288, 1280)
+    #rgb_shape = (900, 1600, 3), #(375, 1242)->(900, 1600) misi othoni mauri
+    rgb_shape = (450, 800, 3),
+    # train_dataset = "KittiMonoDataset",
+    # val_dataset   = "KittiMonoDataset",
+    # test_dataset  = "KittiMonoTestDataset"
+    # train_split_file = os.path.join(cfg.path.visualDet3D_path, 'data', 'kitti', 'chen_split', 'train.txt'),
+    # val_split_file   = os.path.join(cfg.path.visualDet3D_path, 'data', 'kitti', 'chen_split', 'val.txt'),
 )
 
 data.augmentation = edict(
     rgb_mean = np.array([0.485, 0.456, 0.406]),
     rgb_std  = np.array([0.229, 0.224, 0.225]),
     cropSize = (data.rgb_shape[0], data.rgb_shape[1]),
-    crop_top = 100,
+    crop_top = 83
+    #crop_top = 100
 )
 data.train_augmentation = [
     edict(type_name='ConvertToFloat'),
