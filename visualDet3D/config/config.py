@@ -21,10 +21,10 @@ cfg.trainer = trainer
 
 ## path
 path = edict()
-path.data_path = "D:/Python_Projects/PhD_project/visualDet3D/data/training" # used in visualDet3D/data/.../dataset
-path.test_path = "D:/Python_Projects/PhD_project/visualDet3D/data/testing" # used in visualDet3D/data/.../dataset
-path.visualDet3D_path = "D:/Python_Projects/PhD_project/visualDet3D/visualDet3D" # The path should point to the inner subfolder
-path.project_path = "D:/Python_Projects/PhD_project/visualDet3D/workdirs" # or other path for pickle files, checkpoints, tensorboard logging and output files.
+path.data_path = "/home/dimitris/PhD/PhD/visualDet3D/data/training" # used in visualDet3D/data/.../dataset
+path.test_path = "/home/dimitris/PhD/PhD/visualDet3D/data/testing" # used in visualDet3D/data/.../dataset
+path.visualDet3D_path = "/home/dimitris/PhD/PhD/visualDet3D/visualDet3D" # The path should point to the inner subfolder
+path.project_path = "/home/dimitris/PhD/PhD/visualDet3D/workdirs" # or other path for pickle files, checkpoints, tensorboard logging and output files.
 if not os.path.isdir(path.project_path):
     os.mkdir(path.project_path)
 path.project_path = os.path.join(path.project_path, 'Mono3D')

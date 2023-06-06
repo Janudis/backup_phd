@@ -1,5 +1,5 @@
 import sys
-sys.path.append('D:/Python_Projects/PhD_project')
+sys.path.append('/home/dimitris/PhD/PhD')
 
 from PIL import Image
 import os
@@ -15,10 +15,10 @@ from visualDet3D.visualDet3D.networks.lib.fast_utils.hill_climbing import post_o
 from visualDet3D.visualDet3D.networks.utils import BBox3dProjector, BackProjection
 from visualDet3D.visualDet3D.data.pipeline import build_augmentator
 
-cfg = cfg_from_file('D:/Python_Projects/PhD_project/visualDet3D/config/config.py')
+cfg = cfg_from_file('/home/dimitris/PhD/PhD/visualDet3D/config/config.py')
 is_test_train = True
 
-checkpoint_name = 'D:/Python_Projects/PhD_project/visualDet3D/workdirs/Mono3D/checkpoint/GroundAware_pretrained.pth'
+checkpoint_name = '/home/dimitris/PhD/PhD/visualDet3D/workdirs/Mono3D/checkpoint/GroundAware_pretrained.pth'
 
 detector = DETECTOR_DICT[cfg.detector.name](cfg.detector)
 detector = detector.cuda()
@@ -38,10 +38,10 @@ test_func = PIPELINE_DICT[cfg.trainer.test_func]
 projector = BBox3dProjector().cuda()
 backprojector = BackProjection().cuda()
 
-input_image = Image.open('D:/Python_Projects/self_driving_car/nuscenes-devkit/python-sdk/nuscenes/visualDet3D/data/testing/image_2/000001.png')
+input_image = Image.open('/home/dimitris/PhD/PhD/visualDet3D/data/testing/image_2/000001.png')
 image = np.array(input_image)
 calib = dict()
-path = 'D:/Python_Projects/self_driving_car/nuscenes-devkit/python-sdk/nuscenes/visualDet3D/data/testing/calib/000001.txt'
+path = '/home/dimitris/PhD/PhD/visualDet3D/data/testing/calib/000001.txt'
 with open(path) as f:
     str_list = f.readlines()
 str_list = [itm.rstrip() for itm in str_list if itm != '\n']
@@ -223,34 +223,34 @@ with torch.no_grad():
 #  [ 0.          0.          0.22048835 -4.04300189]
 #  [ 0.          0.          0.          1.        ]]
 
-nusc_dataset = NuscenesDataset(nusc)
+# nusc_dataset = NuscenesDataset(nusc)
 
-dn = objects[0]['whl'].cpu().numpy()
-xyz = objects[0]['xyz'].cpu().numpy()
-theta = objects[0]['theta'].cpu().numpy()
+# dn = objects[0]['whl'].cpu().numpy()
+# xyz = objects[0]['xyz'].cpu().numpy()
+# theta = objects[0]['theta'].cpu().numpy()
 
-points, lidar_points = nusc_dataset.get_points(0)
-lidar_point = np.array([ lidar_points[0][0], lidar_points[1][0], lidar_points[2][0] ])
-# print("bb", objects[0]['xyz'].cpu().numpy())
-# print("lidar", lidar_point)
-# print(points[0][0])
-# print(points[0][1])
-# print(points[0][2])
+# points, lidar_points = nusc_dataset.get_points(0)
+# lidar_point = np.array([ lidar_points[0][0], lidar_points[1][0], lidar_points[2][0] ])
+# # print("bb", objects[0]['xyz'].cpu().numpy())
+# # print("lidar", lidar_point)
+# # print(points[0][0])
+# # print(points[0][1])
+# # print(points[0][2])
 
-z_local = xyz - lidar_point
-#print(z_local)
-z_dim = dn
-#print(z_dim)
-if(objects[0]['type_name']=='Car'):
-    z_class = 1
-else:
-    z_class = 0
-#print(z_class)
-z_dim = z_dim.reshape(1, 3)
-z_local = z_local.reshape(1, 3)
-# Concatenate the arrays horizontally
-z = np.concatenate((z_local, z_dim, np.array([[z_class]])), axis=1)
-print(z)
+# z_local = xyz - lidar_point
+# #print(z_local)
+# z_dim = dn
+# #print(z_dim)
+# if(objects[0]['type_name']=='Car'):
+#     z_class = 1
+# else:
+#     z_class = 0
+# #print(z_class)
+# z_dim = z_dim.reshape(1, 3)
+# z_local = z_local.reshape(1, 3)
+# # Concatenate the arrays horizontally
+# z = np.concatenate((z_local, z_dim, np.array([[z_class]])), axis=1)
+# print(z)
 
 # lidar_point_homog = np.append(lidar_point, 1)
 # # Multiply x_homog by Qn_inv

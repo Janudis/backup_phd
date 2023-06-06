@@ -2,6 +2,7 @@
 # Code written by Oscar Beijbom, Holger Caesar & Fong Whye Kit, 2020.
 import sys
 #sys.path.append('D:/Python_Projects/PhD_project')
+sys.path.append('/home/dimitris/PhD/PhD/nuscenes')
 
 import torchvision.transforms as transforms
 import subprocess
