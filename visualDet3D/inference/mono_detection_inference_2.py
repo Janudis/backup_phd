@@ -16,7 +16,6 @@ from visualDet3D.visualDet3D.networks.utils import BBox3dProjector, BackProjecti
 from visualDet3D.visualDet3D.data.pipeline import build_augmentator
 
 cfg = cfg_from_file('/home/dimitris/PhD/PhD/visualDet3D/config/config.py')
-is_test_train = True
 checkpoint_name = '/home/dimitris/PhD/PhD/visualDet3D/workdirs/Mono3D/checkpoint/GroundAware_pretrained.pth'
 # cfg = cfg_from_file('D:/Python_Projects/PhD_project/visualDet3D/config/config.py')
 # checkpoint_name = 'D:/Python_Projects/PhD_project/visualDet3D/workdirs/Mono3D/checkpoint/GroundAware_pretrained.pth'
