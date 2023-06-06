@@ -17,20 +17,21 @@ from visualDet3D.visualDet3D.data.pipeline import build_augmentator
 
 cfg = cfg_from_file('/home/dimitris/PhD/PhD/visualDet3D/config/config.py')
 is_test_train = True
-
 checkpoint_name = '/home/dimitris/PhD/PhD/visualDet3D/workdirs/Mono3D/checkpoint/GroundAware_pretrained.pth'
+# cfg = cfg_from_file('D:/Python_Projects/PhD_project/visualDet3D/config/config.py')
+# checkpoint_name = 'D:/Python_Projects/PhD_project/visualDet3D/workdirs/Mono3D/checkpoint/GroundAware_pretrained.pth'
+weight_path = os.path.join(cfg.path.checkpoint_path, checkpoint_name)
 
 detector = DETECTOR_DICT[cfg.detector.name](cfg.detector)
 detector = detector.cuda()
 
-weight_path = os.path.join(cfg.path.checkpoint_path, checkpoint_name)
 state_dict = torch.load(weight_path, map_location='cuda:{}'.format(cfg.trainer.gpu))
 new_dict = state_dict.copy()
 for key in state_dict:
     if 'focalLoss' in key:
         new_dict.pop(key)
 detector.load_state_dict(new_dict, strict=False)
-detector.eval().cuda()
+detector.eval().cuda() #turns off behaviors specific to training such as dropout and batch normalization layers.
 
 # testing pipeline
 test_func = PIPELINE_DICT[cfg.trainer.test_func]
@@ -51,6 +52,28 @@ for k, v in calib.items():
     calib[k] = [float(itm) for itm in v.split()]
 calibr = np.array(calib['P2']).reshape(3,4)
 
+# input_image = Image.open('D:/Python_Projects/self_driving_car/nuscenes-devkit/python-sdk/nuscenes/visualDet3D/data/testing/image_2/000001.png')
+# image = np.array(input_image)
+# calib = dict()
+# path = 'D:/Python_Projects/self_driving_car/nuscenes-devkit/python-sdk/nuscenes/visualDet3D/data/testing/calib/000001.txt'
+# with open(path) as f:
+#     str_list = f.readlines()
+# str_list = [itm.rstrip() for itm in str_list if itm != '\n']
+# for itm in str_list:
+#     calib[itm.split(':')[0]] = itm.split(':')[1]
+# for k, v in calib.items():
+#     calib[k] = [float(itm) for itm in v.split()]
+# calibr = np.array(calib['P2']).reshape(3,4)
+
+nusc_dataset = NuscenesDataset(nusc)
+input_image = nusc_dataset.__getitem__(0)
+image = np.array(input_image)
+calibr = nusc_dataset.get_calib(0)
+print("Shape of image array: ", image.shape)
+print("Data type: ", image.dtype)
+print("Max value: ", np.max(image))
+print("Min value: ", np.min(image))
+print("Mean value: ", np.mean(image))
 
 def collate_fn(batch):
     rgb_images = np.array([item["image"] for item in batch]) #[batch, H, W, 3]
@@ -58,8 +81,6 @@ def collate_fn(batch):
     calib = np.array([item["calib"] for item in batch])
     return torch.from_numpy(rgb_images).float(), torch.from_numpy(calib).float()
 
-
-is_test_train=True
 transform = build_augmentator(cfg.data.test_augmentation)
 transformed_image, transformed_P2 = transform(image.copy(), p2=calibr.copy())
 data = {'calib': transformed_P2,
@@ -72,13 +93,18 @@ collated_data = collate_fn([data])
 
 transformed_image = collated_data[0]
 transformed_P2 = collated_data[1]
+# height = collated_data[0].shape[2]
+# scale_2d = (original_height - cfg.data.augmentation.crop_top) / height
 
-height = collated_data[0].shape[2]
-scale_2d = (original_height - cfg.data.augmentation.crop_top) / height
-
-test_func = PIPELINE_DICT[cfg.trainer.test_func]
+print(collated_data)
+print("Shape of image tensor: ", transformed_image.shape)
+print("Data type: ", transformed_image.dtype)
+print("Max value: ", torch.max(transformed_image))
+print("Min value: ", torch.min(transformed_image))
+print("Mean value: ", torch.mean(transformed_image))
 with torch.no_grad():
-    scores, bbox, obj_names = test_func(collated_data, detector, None, cfg=cfg)       
+    scores, bbox, obj_names = test_func(collated_data, detector, None, cfg=cfg) 
+    print(scores)
     transformed_P2 = transformed_P2[0] 
     bbox_2d = bbox[:, 0:4]
     bbox_3d_state = bbox[:, 4:] #[cx,cy,z,w,h,l,alpha]
@@ -95,12 +121,12 @@ with torch.no_grad():
         obj['type_name'] = obj_names[i]
         obj['xyz'] = bbox_3d_state_3d[i, 0:3]
         objects.append(obj)
-#print(objects)
-# [{'whl': tensor([1.6292, 1.5660, 4.5354], device='cuda:0'), 'theta': tensor(-0.2489, device='cuda:0'), 
-# 'score': tensor(0.9961, device='cuda:0'), 'type_name': 'Car', 'xyz': tensor([-9.1681,  0.9484, 18.3366], device='cuda:0')}, 
-# {'whl': tensor([1.7288, 1.6186, 4.1517], device='cuda:0'), 'theta': tensor(0.7109, device='cuda:0'), 'score': tensor(0.9540, device='cuda:0'), 
-# 'type_name': 'Car', 'xyz': tensor([-8.2275,  0.7891, 
-# 11.9172], device='cuda:0')}]
+print(objects)
+
+# [{'whl': tensor([1.6292, 1.5660, 4.5354], device='cuda:0'), 'theta': tensor(-0.2489, device='cuda:0'), 'score': 
+#   tensor(0.9961, device='cuda:0'), 'type_name': 'Car', 'xyz': tensor([-9.1681,  0.9484, 18.3366], device='cuda:0')}, 
+#   {'whl': tensor([1.7288, 1.6186, 4.1517], device='cuda:0'), 'theta': tensor(0.7109, device='cuda:0'), 
+#    'score': tensor(0.9540, device='cuda:0'), 'type_name': 'Car', 'xyz': tensor([-8.2275,  0.7891, 11.9172], device='cuda:0')}]
 
 # from scipy.spatial.transform import Rotation 
 # whl = objects[0]['whl']
@@ -250,6 +276,7 @@ with torch.no_grad():
 # z_local = z_local.reshape(1, 3)
 # # Concatenate the arrays horizontally
 # z = np.concatenate((z_local, z_dim, np.array([[z_class]])), axis=1)
+
 # print(z)
 
 # lidar_point_homog = np.append(lidar_point, 1)
