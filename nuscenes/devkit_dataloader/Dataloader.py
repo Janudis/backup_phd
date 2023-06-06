@@ -31,6 +31,7 @@ class NuscenesDataset(Dataset):
         cam_front_data = self.nusc.get('sample_data', my_sample['data']['CAM_FRONT'])
         x = cam_front_data['filename']
         image_path = '/home/dimitris/PhD/PhD/nuscenes/data/sets/nuscenes/v1.0-mini/' + x
+        #image_path = 'D:/Python_Projects/self_driving_car/nuscenes-devkit/python-sdk/nuscenes/' + x
         image = Image.open(image_path)
         #image = self.transform(image)
         #image = image.transpose(0, 1).transpose(1, 2)
@@ -41,6 +42,7 @@ class NuscenesDataset(Dataset):
         cam_front_data = self.nusc.get('sample_data', my_sample['data']['CAM_FRONT'])
         x = cam_front_data['filename']
         image_path = '/home/dimitris/PhD/PhD/nuscenes/data/sets/nuscenes/v1.0-mini/' + x
+        #image_path = 'D:/Python_Projects/self_driving_car/nuscenes-devkit/python-sdk/nuscenes/' + x
         image = Image.open(image_path)
         image = self.transform(image)
         return image
