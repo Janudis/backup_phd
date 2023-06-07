@@ -1,10 +1,7 @@
 # nuScenes dev-kit.
 # Code written by Oscar Beijbom, Holger Caesar & Fong Whye Kit, 2020.
 import sys
-
-#sys.path.append('D:/Python_Projects/PhD_project')
-sys.path.append('/home/dimitris/PhD/PhD/nuscenes')
-# sys.path.append('D:/Python_Projects/PhD_project')
+sys.path.append('D:/Python_Projects/PhD_project')
 
 import torchvision.transforms as transforms
 import subprocess
@@ -60,7 +57,8 @@ class NuScenes:
     def __init__(self,
                  version: str = 'v1.0-mini',
                  #dataroot: str = '/data/sets/nuscenes',
-                 dataroot: str = '/data/sets/nuscenes/v1.0-mini',
+                 #dataroot: str = '/data/sets/nuscenes/v1.0-mini',
+                 dataroot: str = 'D:\Python_Projects\\PhD_project\\nuscenes\data\sets\\nuscenes\\v1.0-mini',
                  verbose: bool = True,
                  map_resolution: float = 0.1):
         """

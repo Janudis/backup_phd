@@ -21,14 +21,17 @@ cfg.trainer = trainer
 
 ## path
 path = edict()
+path.data_path = "D:/Python_Projects/PhD_project/nuscenes/nusc_kitti/mini_train" # used in visualDet3D/data/.../dataset
+path.test_path = "D:/Python_Projects/PhD_project/nuscenes/nusc_kitti/mini_train" # used in visualDet3D/data/.../dataset
 # path.data_path = "D:/Python_Projects/PhD_project/visualDet3D/data/training" # used in visualDet3D/data/.../dataset
 # path.test_path = "D:/Python_Projects/PhD_project/visualDet3D/data/testing" # used in visualDet3D/data/.../dataset
-# path.visualDet3D_path = "D:/Python_Projects/PhD_project/visualDet3D/visualDet3D" # The path should point to the inner subfolder
-# path.project_path = "D:/Python_Projects/PhD_project/visualDet3D/workdirs" # or other path for pickle files, checkpoints, tensorboard logging and output files.
-path.data_path = "/home/dimitris/PhD/PhD/visualDet3D/data/training" # used in visualDet3D/data/.../dataset
-path.test_path = "/home/dimitris/PhD/PhD/visualDet3D/data/testing" # used in visualDet3D/data/.../dataset
-path.visualDet3D_path = "/home/dimitris/PhD/PhD/visualDet3D/visualDet3D" # The path should point to the inner subfolder
-path.project_path = "/home/dimitris/PhD/PhD/visualDet3D/workdirs" # or other path for pickle files, checkpoints, tensorboard logging and output files.
+path.visualDet3D_path = "D:/Python_Projects/PhD_project/visualDet3D/visualDet3D" # The path should point to the inner subfolder
+path.project_path = "D:/Python_Projects/PhD_project/visualDet3D/workdirs" # or other path for pickle files, checkpoints, tensorboard logging and output files.
+
+# path.data_path = "/home/dimitris/PhD/PhD/visualDet3D/data/training" # used in visualDet3D/data/.../dataset
+# path.test_path = "/home/dimitris/PhD/PhD/visualDet3D/data/testing" # used in visualDet3D/data/.../dataset
+# path.visualDet3D_path = "/home/dimitris/PhD/PhD/visualDet3D/visualDet3D" # The path should point to the inner subfolder
+# path.project_path = "/home/dimitris/PhD/PhD/visualDet3D/workdirs" # or other path for pickle files, checkpoints, tensorboard logging and output files.
 
 if not os.path.isdir(path.project_path):
     os.mkdir(path.project_path)
@@ -82,9 +85,9 @@ cfg.scheduler = scheduler
 data = edict(
     batch_size = 8,
     num_workers = 8,
-    #rgb_shape = (288, 1280, 3), # KITTI:(375, 1242)->(288, 1280)
+    rgb_shape = (288, 1280, 3), # KITTI:(375, 1242)->(288, 1280)
     #rgb_shape = (900, 1600, 3), #(375, 1242)->(900, 1600) misi othoni mauri
-    rgb_shape = (450, 800, 3),
+    #rgb_shape = (450, 800, 3),
     # train_dataset = "KittiMonoDataset",
     # val_dataset   = "KittiMonoDataset",
     # test_dataset  = "KittiMonoTestDataset"
@@ -96,8 +99,8 @@ data.augmentation = edict(
     rgb_mean = np.array([0.485, 0.456, 0.406]),
     rgb_std  = np.array([0.229, 0.224, 0.225]),
     cropSize = (data.rgb_shape[0], data.rgb_shape[1]),
-    crop_top = 83
-    #crop_top = 100
+    #crop_top = 83
+    crop_top = 100
 )
 data.train_augmentation = [
     edict(type_name='ConvertToFloat'),

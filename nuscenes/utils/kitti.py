@@ -11,7 +11,7 @@ from PIL import Image
 from matplotlib.axes import Axes
 from pyquaternion import Quaternion
 
-from nuscenes.nuscenes import NuScenesExplorer
+from nuscenes.devkit_dataloader.nuscenes import NuScenesExplorer
 from nuscenes.utils.data_classes import Box, LidarPointCloud
 from nuscenes.utils.geometry_utils import box_in_image, BoxVisibility, view_points
 
