@@ -36,7 +36,9 @@ To work with the original KITTI dataset, use these parameters:
 See https://www.nuscenes.org/object-detection for more information on the nuScenes result format.
 """
 import sys
-sys.path.append('D:/Python_Projects/PhD_project')
+#sys.path.append('D:/Python_Projects/PhD_project')
+sys.path.append('/home/dimitris/PhD/PhD')
+
 import json
 import os
 from typing import List, Dict, Any
@@ -111,6 +113,8 @@ class KittiConverter:
         sample_tokens = self._split_to_samples(split_logs)
         sample_tokens = sample_tokens[:self.image_count]
 
+        calib_counter = 0 
+        file_counter = 0
         tokens = []
         for sample_token in sample_tokens:
 
@@ -163,7 +167,8 @@ class KittiConverter:
 
             # Convert image (jpg to png).
             src_im_path = os.path.join(self.nusc.dataroot, filename_cam_full)
-            dst_im_path = os.path.join(image_folder, sample_token + '.png')
+            dst_im_path = os.path.join(image_folder, '{:06d}.png'.format(file_counter))  # use file_counter for file name
+            #dst_im_path = os.path.join(image_folder, sample_token + '.png')
             if not os.path.exists(dst_im_path):
                 im = Image.open(src_im_path)
                 im.save(dst_im_path, "PNG")
@@ -171,7 +176,8 @@ class KittiConverter:
             # Convert lidar.
             # Note that we are only using a single sweep, instead of the commonly used n sweeps.
             src_lid_path = os.path.join(self.nusc.dataroot, filename_lid_full)
-            dst_lid_path = os.path.join(lidar_folder, sample_token + '.bin')
+            #dst_lid_path = os.path.join(lidar_folder, sample_token + '.bin')
+            dst_lid_path = os.path.join(lidar_folder, '{:06d}.bin'.format(file_counter))  # use file_counter for file name
             assert not dst_lid_path.endswith('.pcd.bin')
             pcl = LidarPointCloud.from_file(src_lid_path)
             pcl.rotate(kitti_to_nu_lidar_inv.rotation_matrix)  # In KITTI lidar frame.
@@ -190,7 +196,16 @@ class KittiConverter:
             kitti_transforms['R0_rect'] = r0_rect.rotation_matrix  # Cameras are already rectified.
             kitti_transforms['Tr_velo_to_cam'] = np.hstack((velo_to_cam_rot, velo_to_cam_trans.reshape(3, 1)))
             kitti_transforms['Tr_imu_to_velo'] = imu_to_velo_kitti
-            calib_path = os.path.join(calib_folder, sample_token + '.txt')
+            # calib_path = os.path.join(calib_folder, sample_token + '.txt')
+            # with open(calib_path, "w") as calib_file:
+            #     for (key, val) in kitti_transforms.items():
+            #         val = val.flatten()
+            #         val_str = '%.12e' % val[0]
+            #         for v in val[1:]:
+            #             val_str += ' %.12e' % v
+            #         calib_file.write('%s: %s\n' % (key, val_str))
+
+            calib_path = os.path.join(calib_folder, '{:06d}.txt'.format(calib_counter))  # use calib_counter for file name
             with open(calib_path, "w") as calib_file:
                 for (key, val) in kitti_transforms.items():
                     val = val.flatten()
@@ -198,9 +213,12 @@ class KittiConverter:
                     for v in val[1:]:
                         val_str += ' %.12e' % v
                     calib_file.write('%s: %s\n' % (key, val_str))
-
+            
+            calib_counter += 1  # increment the counter after each loop iteration
+            
             # Write label file.
-            label_path = os.path.join(label_folder, sample_token + '.txt')
+            #label_path = os.path.join(label_folder, sample_token + '.txt')
+            label_path = os.path.join(label_folder, '{:06d}.txt'.format(file_counter))  # use file_counter for file name
             if os.path.exists(label_path):
                 print('Skipping existing file: %s' % label_path)
                 continue
@@ -246,6 +264,7 @@ class KittiConverter:
 
                     # Write to disk.
                     label_file.write(output + '\n')
+            file_counter += 1 
 
     def render_kitti(self, render_2d: bool) -> None:
         """
