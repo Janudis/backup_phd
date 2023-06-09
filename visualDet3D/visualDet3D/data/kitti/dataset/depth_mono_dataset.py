@@ -6,9 +6,13 @@ import torch.nn as nn
 import torch.nn.functional as F
 import torch.optim as optim
 import torch.utils.data
-from visualDet3D.visualDet3D.data.kitti.utils import read_image, read_pc_from_bin, read_depth
-from visualDet3D.visualDet3D.data.pipeline import build_augmentator
-from visualDet3D.visualDet3D.networks.utils.registry import DATASET_DICT
+# from visualDet3D.visualDet3D.data.kitti.utils import read_image, read_pc_from_bin, read_depth
+# from visualDet3D.visualDet3D.data.pipeline import build_augmentator
+# from visualDet3D.visualDet3D.networks.utils.registry import DATASET_DICT
+
+from visualDet3D.data.kitti.utils import read_image, read_pc_from_bin, read_depth
+from visualDet3D.data.pipeline import build_augmentator
+from visualDet3D.networks.utils.registry import DATASET_DICT
 from PIL import Image
 import os
 import pickle

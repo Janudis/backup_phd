@@ -8,10 +8,13 @@ import torch.optim as optim
 from torch.utils.tensorboard import SummaryWriter
 import numpy as np
 from easydict import EasyDict
-from visualDet3D.visualDet3D.utils.utils import LossLogger, compound_annotation
-from visualDet3D.visualDet3D.networks.utils.registry import PIPELINE_DICT
-from typing import Tuple, List
 
+# from visualDet3D.visualDet3D.utils.utils import LossLogger, compound_annotation
+# from visualDet3D.visualDet3D.networks.utils.registry import PIPELINE_DICT
+from visualDet3D.utils.utils import LossLogger, compound_annotation
+from visualDet3D.networks.utils.registry import PIPELINE_DICT
+
+from typing import Tuple, List
 
 @PIPELINE_DICT.register_module
 @torch.no_grad()

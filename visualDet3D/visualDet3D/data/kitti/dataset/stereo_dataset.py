@@ -9,16 +9,23 @@ from typing import List, Tuple
 from torch.utils.data import Dataset, DataLoader
 import torch
 import torch.utils.data
-from visualDet3D.visualDet3D.data.kitti.kittidata import KittiData, KittiObj, KittiCalib
-from visualDet3D.visualDet3D.data.pipeline import build_augmentator
+# from visualDet3D.visualDet3D.data.kitti.kittidata import KittiData, KittiObj, KittiCalib
+# from visualDet3D.visualDet3D.data.pipeline import build_augmentator
+# from visualDet3D.visualDet3D.utils.utils import alpha2theta_3d, theta2alpha_3d, draw_3D_box
+# from visualDet3D.visualDet3D.networks.utils import BBox3dProjector
+# from visualDet3D.visualDet3D.networks.utils.registry import DATASET_DICT
+
+from visualDet3D.data.kitti.kittidata import KittiData, KittiObj, KittiCalib
+from visualDet3D.data.pipeline import build_augmentator
+from visualDet3D.utils.utils import alpha2theta_3d, theta2alpha_3d, draw_3D_box
+from visualDet3D.networks.utils import BBox3dProjector
+from visualDet3D.networks.utils.registry import DATASET_DICT
 
 import os
 import pickle
 import numpy as np
 from copy import deepcopy
-from visualDet3D.visualDet3D.utils.utils import alpha2theta_3d, theta2alpha_3d, draw_3D_box
-from visualDet3D.visualDet3D.networks.utils import BBox3dProjector
-from visualDet3D.visualDet3D.networks.utils.registry import DATASET_DICT
+
 import sys
 from matplotlib import pyplot as plt
 ros_py_path = '/opt/ros/kinetic/lib/python2.7/dist-packages'

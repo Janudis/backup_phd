@@ -161,6 +161,7 @@ class KittiConverter:
             # Note that this may be confusing as the filename of the camera will include the timestamp of the lidar,
             # not the camera.
             filename_cam_full = sd_record_cam['filename']
+            #print("nuScenes filename: ", filename_cam_full)
             filename_lid_full = sd_record_lid['filename']
             # token = '%06d' % token_idx # Alternative to use KITTI names.
             token_idx += 1

@@ -7,18 +7,27 @@ from easydict import EasyDict
 import numpy as np
 from typing import List, Tuple, Dict
 
+# from visualDet3D.visualDet3D.networks.heads.losses import SigmoidFocalLoss, ModifiedSmoothL1Loss
+# from visualDet3D.visualDet3D.networks.heads.anchors import Anchors
+# from visualDet3D.visualDet3D.networks.utils.utils import calc_iou, BackProjection, BBox3dProjector
+# from visualDet3D.visualDet3D.networks.lib.fast_utils.hill_climbing import post_opt
+# from visualDet3D.visualDet3D.networks.utils.utils import ClipBoxes
+# from visualDet3D.visualDet3D.networks.lib.blocks import AnchorFlatten
+# from visualDet3D.visualDet3D.networks.lib.ops import ModulatedDeformConvPack
+# from visualDet3D.visualDet3D.networks.lib.look_ground import LookGround
+# from visualDet3D.visualDet3D.networks.utils.rtm3d_utils import _transpose_and_gather_feat, compute_rot_loss, gen_position, Position_loss, _nms, _topk_channel, _topk
+# from visualDet3D.visualDet3D.utils.utils import convertRot2Alpha
 
-from visualDet3D.visualDet3D.networks.heads.losses import SigmoidFocalLoss, ModifiedSmoothL1Loss
-from visualDet3D.visualDet3D.networks.heads.anchors import Anchors
-from visualDet3D.visualDet3D.networks.utils.utils import calc_iou, BackProjection, BBox3dProjector
-from visualDet3D.visualDet3D.networks.lib.fast_utils.hill_climbing import post_opt
-from visualDet3D.visualDet3D.networks.utils.utils import ClipBoxes
-from visualDet3D.visualDet3D.networks.lib.blocks import AnchorFlatten
-from visualDet3D.visualDet3D.networks.lib.ops import ModulatedDeformConvPack
-from visualDet3D.visualDet3D.networks.lib.look_ground import LookGround
-from visualDet3D.visualDet3D.networks.utils.rtm3d_utils import _transpose_and_gather_feat, compute_rot_loss, gen_position, Position_loss, _nms, _topk_channel, _topk
-from visualDet3D.visualDet3D.utils.utils import convertRot2Alpha
-
+from visualDet3D.networks.heads.losses import SigmoidFocalLoss, ModifiedSmoothL1Loss
+from visualDet3D.networks.heads.anchors import Anchors
+from visualDet3D.networks.utils.utils import calc_iou, BackProjection, BBox3dProjector
+from visualDet3D.networks.lib.fast_utils.hill_climbing import post_opt
+from visualDet3D.networks.utils.utils import ClipBoxes
+from visualDet3D.networks.lib.blocks import AnchorFlatten
+from visualDet3D.networks.lib.ops import ModulatedDeformConvPack
+from visualDet3D.networks.lib.look_ground import LookGround
+from visualDet3D.networks.utils.rtm3d_utils import _transpose_and_gather_feat, compute_rot_loss, gen_position, Position_loss, _nms, _topk_channel, _topk
+from visualDet3D.utils.utils import convertRot2Alpha
 class KM3DHead(nn.Module):
     """Some Information about KM3DHead"""
     def __init__(self, num_classes:int=3,

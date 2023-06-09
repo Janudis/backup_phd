@@ -9,8 +9,8 @@ import torch.nn.functional as F
 import torch.optim as optim
 import numpy as np
 import math
-from visualDet3D.visualDet3D.networks.lib.ops.dcn.deform_conv import ModulatedDeformConvPack
-
+# from visualDet3D.visualDet3D.networks.lib.ops.dcn.deform_conv import ModulatedDeformConvPack
+from visualDet3D.networks.lib.ops.dcn.deform_conv import ModulatedDeformConvPack
 class Identity(nn.Module):
 
     def __init__(self):

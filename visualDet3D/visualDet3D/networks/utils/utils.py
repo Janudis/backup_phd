@@ -5,7 +5,7 @@ import torch.nn as nn
 import numpy as np
 import cv2
 from functools import wraps
-from visualDet3D.visualDet3D.utils.utils import alpha2theta_3d, theta2alpha_3d
+from visualDet3D.utils.utils import alpha2theta_3d, theta2alpha_3d
 
 
 def get_num_parameters(model):

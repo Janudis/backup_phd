@@ -3,11 +3,13 @@ from typing import List, Dict, Tuple, Optional
 import numpy as np
 import torch
 import torch.nn as nn
-from visualDet3D.visualDet3D.networks.utils.utils import calc_iou
-from visualDet3D.visualDet3D.networks.lib.disparity_loss import stereo_focal_loss
-from visualDet3D.visualDet3D.utils.timer import profile
+# from visualDet3D.visualDet3D.networks.utils.utils import calc_iou
+# from visualDet3D.visualDet3D.networks.lib.disparity_loss import stereo_focal_loss
+# from visualDet3D.visualDet3D.utils.timer import profile
 
-
+from visualDet3D.networks.utils.utils import calc_iou
+from visualDet3D.networks.lib.disparity_loss import stereo_focal_loss
+from visualDet3D.utils.timer import profile
 class SigmoidFocalLoss(nn.Module):
     def __init__(self, gamma=0.0, balance_weights=torch.tensor([1.0], dtype=torch.float)):
         super(SigmoidFocalLoss, self).__init__()

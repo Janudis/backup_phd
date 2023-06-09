@@ -21,17 +21,19 @@ cfg.trainer = trainer
 
 ## path
 path = edict()
-path.data_path = "D:/Python_Projects/PhD_project/nuscenes/nusc_kitti/mini_train" # used in visualDet3D/data/.../dataset
-path.test_path = "D:/Python_Projects/PhD_project/nuscenes/nusc_kitti/mini_train" # used in visualDet3D/data/.../dataset
-# path.data_path = "D:/Python_Projects/PhD_project/visualDet3D/data/training" # used in visualDet3D/data/.../dataset
-# path.test_path = "D:/Python_Projects/PhD_project/visualDet3D/data/testing" # used in visualDet3D/data/.../dataset
-path.visualDet3D_path = "D:/Python_Projects/PhD_project/visualDet3D/visualDet3D" # The path should point to the inner subfolder
-path.project_path = "D:/Python_Projects/PhD_project/visualDet3D/workdirs" # or other path for pickle files, checkpoints, tensorboard logging and output files.
+# path.data_path = "D:/Python_Projects/PhD_project/nuscenes/nusc_kitti/mini_train" # used in visualDet3D/data/.../dataset
+# path.test_path = "D:/Python_Projects/PhD_project/nuscenes/nusc_kitti/mini_train" # used in visualDet3D/data/.../dataset
+# # path.data_path = "D:/Python_Projects/PhD_project/visualDet3D/data/training" # used in visualDet3D/data/.../dataset
+# # path.test_path = "D:/Python_Projects/PhD_project/visualDet3D/data/testing" # used in visualDet3D/data/.../dataset
+# path.visualDet3D_path = "D:/Python_Projects/PhD_project/visualDet3D/visualDet3D" # The path should point to the inner subfolder
+# path.project_path = "D:/Python_Projects/PhD_project/visualDet3D/workdirs" # or other path for pickle files, checkpoints, tensorboard logging and output files.
 
+path.data_path = "/home/dimitris/PhD/PhD/nuscenes/nusc_kitti/mini_train" # used in visualDet3D/data/.../dataset
+path.test_path = "/home/dimitris/PhD/PhD/nuscenes/nusc_kitti/mini_train" # used in visualDet3D/data/.../dataset
 # path.data_path = "/home/dimitris/PhD/PhD/visualDet3D/data/training" # used in visualDet3D/data/.../dataset
 # path.test_path = "/home/dimitris/PhD/PhD/visualDet3D/data/testing" # used in visualDet3D/data/.../dataset
-# path.visualDet3D_path = "/home/dimitris/PhD/PhD/visualDet3D/visualDet3D" # The path should point to the inner subfolder
-# path.project_path = "/home/dimitris/PhD/PhD/visualDet3D/workdirs" # or other path for pickle files, checkpoints, tensorboard logging and output files.
+path.visualDet3D_path = "/home/dimitris/PhD/PhD/visualDet3D/visualDet3D" # The path should point to the inner subfolder
+path.project_path = "/home/dimitris/PhD/PhD/visualDet3D/workdirs" # or other path for pickle files, checkpoints, tensorboard logging and output files.
 
 if not os.path.isdir(path.project_path):
     os.mkdir(path.project_path)
@@ -88,11 +90,13 @@ data = edict(
     rgb_shape = (288, 1280, 3), # KITTI:(375, 1242)->(288, 1280)
     #rgb_shape = (900, 1600, 3), #(375, 1242)->(900, 1600) misi othoni mauri
     #rgb_shape = (450, 800, 3),
-    # train_dataset = "KittiMonoDataset",
-    # val_dataset   = "KittiMonoDataset",
-    # test_dataset  = "KittiMonoTestDataset"
+    train_dataset = "KittiMonoDataset",
+    val_dataset   = "KittiMonoDataset",
+    test_dataset  = "KittiMonoTestDataset",
     # train_split_file = os.path.join(cfg.path.visualDet3D_path, 'data', 'kitti', 'chen_split', 'train.txt'),
     # val_split_file   = os.path.join(cfg.path.visualDet3D_path, 'data', 'kitti', 'chen_split', 'val.txt'),
+    train_split_file = os.path.join(cfg.path.visualDet3D_path, 'data', 'kitti', 'chen_split', 'train_nusc.txt'),
+    val_split_file   = os.path.join(cfg.path.visualDet3D_path, 'data', 'kitti', 'chen_split', 'val_nusc.txt'),
 )
 
 data.augmentation = edict(

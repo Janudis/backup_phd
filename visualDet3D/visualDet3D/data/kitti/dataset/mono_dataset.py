@@ -11,15 +11,22 @@ from torch.utils.data import Dataset, DataLoader
 import torch
 import torch.nn as nn
 import torch.utils.data
-from visualDet3D.visualDet3D.utils.utils import alpha2theta_3d, theta2alpha_3d
-from visualDet3D.visualDet3D.data.kitti.kittidata import KittiData, KittiObj, KittiCalib
-from visualDet3D.visualDet3D.data.pipeline import build_augmentator
+# from visualDet3D.visualDet3D.utils.utils import alpha2theta_3d, theta2alpha_3d
+# from visualDet3D.visualDet3D.data.kitti.kittidata import KittiData, KittiObj, KittiCalib
+# from visualDet3D.visualDet3D.data.pipeline import build_augmentator
+# from visualDet3D.visualDet3D.networks.utils import BBox3dProjector
+# from visualDet3D.visualDet3D.networks.utils.registry import DATASET_DICT
+
+from visualDet3D.utils.utils import alpha2theta_3d, theta2alpha_3d
+from visualDet3D.data.kitti.kittidata import KittiData, KittiObj, KittiCalib
+from visualDet3D.data.pipeline import build_augmentator
+from visualDet3D.networks.utils import BBox3dProjector
+from visualDet3D.networks.utils.registry import DATASET_DICT
+
 import os
 import pickle
 import numpy as np
 from copy import deepcopy
-from visualDet3D.visualDet3D.networks.utils import BBox3dProjector
-from visualDet3D.visualDet3D.networks.utils.registry import DATASET_DICT
 import sys
 from matplotlib import pyplot as plt
 ros_py_path = '/opt/ros/kinetic/lib/python2.7/dist-packages'
@@ -49,6 +56,8 @@ class KittiMonoDataset(torch.utils.data.Dataset):
                 "label": False,
                 "velodyne": False
             }
+        # print(imdb_file_path)
+        # print(self.imdb)
         if is_train:
             self.transform = build_augmentator(cfg.data.train_augmentation)
         else:
@@ -102,6 +111,7 @@ class KittiMonoDataset(torch.utils.data.Dataset):
                 "calib": True,
                 "image": False,
                 "image_3":True,
+                # "image_2":True,
                 "label": False,
                 "velodyne": False
             }
@@ -174,6 +184,7 @@ class KittiMonoTestDataset(KittiMonoDataset):
 
     def __getitem__(self, index):
         kitti_data = self.imdb[index % len(self.imdb)]
+        #print("kitti data", kitti_data)
         kitti_data.output_dict = self.output_dict
         _, image, _, _ = kitti_data.read_data()
         calib = kitti_data.calib

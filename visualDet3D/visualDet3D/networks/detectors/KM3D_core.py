@@ -3,10 +3,13 @@ import torch.nn as nn
 import torch
 import math
 import time
-from visualDet3D.visualDet3D.networks.backbones import build_backbone
-from visualDet3D.visualDet3D.networks.backbones.dla import DLA
-from visualDet3D.visualDet3D.networks.backbones.dla_utils import DLASegUpsample
+# from visualDet3D.visualDet3D.networks.backbones import build_backbone
+# from visualDet3D.visualDet3D.networks.backbones.dla import DLA
+# from visualDet3D.visualDet3D.networks.backbones.dla_utils import DLASegUpsample
 
+from visualDet3D.networks.backbones import build_backbone
+from visualDet3D.networks.backbones.dla import DLA
+from visualDet3D.networks.backbones.dla_utils import DLASegUpsample
 class KM3DCore(nn.Module):
     """Some Information about RTM3D_core"""
     def __init__(self, backbone_arguments=dict()):

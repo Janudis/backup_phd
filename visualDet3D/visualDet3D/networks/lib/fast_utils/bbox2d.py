@@ -1,7 +1,7 @@
 import numpy as np
 from numba import jit
 
-@jit
+@jit(nopython=True)
 def bbox2d_area(bbox2d):
     """
         input:
@@ -16,7 +16,7 @@ def bbox2d_area(bbox2d):
     area = dx * dy
     return area
 
-@jit
+@jit(nopython=True)
 def iou_2d_combination(box2d_0, box2d_1):
     """
         input:
@@ -36,7 +36,7 @@ def iou_2d_combination(box2d_0, box2d_1):
         result[i] = iou_2d(bbox_2d_repeated, box2d_1)
     return result
 
-@jit
+@jit(nopython=True)
 def iou_2d(box2d_0, box2d_1):
     """
         input:
@@ -65,7 +65,7 @@ def iou_2d(box2d_0, box2d_1):
             result[i] = area / (area_0[i] + area_1[i] - area)
     return result
 
-@jit
+@jit(nopython=True)
 def xyxy2xywh(box2d):
     """
         input   : [n, 4] [x1, y1, x2, y2]
@@ -84,7 +84,7 @@ def xyxy2xywh(box2d):
     result[:, 3] = width_y
     return result
 
-@jit
+@jit(nopython=True)
 def xywh2xyxy(box2d):
     """
         input   :  [n, 4] [x, y, w, h]
@@ -100,7 +100,7 @@ def xywh2xyxy(box2d):
     result[:, 3] = box2d[:, 1] + halfh
     return result
 
-@jit
+@jit(nopython=True)
 def compute_center_targets(gts, anchors, epsilon=1e-6):
     """
         input:
@@ -113,7 +113,7 @@ def compute_center_targets(gts, anchors, epsilon=1e-6):
     targets = (gts - anchors[:, 0:2]) / (anchors[:, 2:4] + epsilon)
     return targets
 
-@jit 
+@jit(nopython=True) 
 def compute_scale_ratios(gts, anchors, epsilon=1e-6):
     """
         input:
@@ -126,7 +126,7 @@ def compute_scale_ratios(gts, anchors, epsilon=1e-6):
     targets = gts / (anchors[2:4] + 1e-6)
     return targets
 
-@jit
+@jit(nopython=True)
 def compute_targets(gts, anchors):
     """
         input:
@@ -141,7 +141,7 @@ def compute_targets(gts, anchors):
     results[:, 2:4] = compute_center_targets(gts_xywh[:, 2:4], anchor_xywh)
     return results
 
-@jit
+@jit(nopython=True)
 def determine_targets(gts, anchors, bg_threshold=0.3, fg_threshold=0.4):
     """
         inputs:

@@ -7,12 +7,19 @@ import torch
 import math
 import time
 from typing import List
-from visualDet3D.visualDet3D.networks.utils import DETECTOR_DICT
-from visualDet3D.visualDet3D.networks.backbones import resnet
-from visualDet3D.visualDet3D.networks.lib.coordconv import CoordinateConv
-from visualDet3D.visualDet3D.networks.lib.blocks import ConvBnReLU
-from visualDet3D.visualDet3D.networks.detectors.unet.u_net import UNet_Core
-from visualDet3D.visualDet3D.networks.heads.monodepth_loss import MonodepthLoss
+# from visualDet3D.visualDet3D.networks.utils import DETECTOR_DICT
+# from visualDet3D.visualDet3D.networks.backbones import resnet
+# from visualDet3D.visualDet3D.networks.lib.coordconv import CoordinateConv
+# from visualDet3D.visualDet3D.networks.lib.blocks import ConvBnReLU
+# from visualDet3D.visualDet3D.networks.detectors.unet.u_net import UNet_Core
+# from visualDet3D.visualDet3D.networks.heads.monodepth_loss import MonodepthLoss
+
+from visualDet3D.networks.utils import DETECTOR_DICT
+from visualDet3D.networks.backbones import resnet
+from visualDet3D.networks.lib.coordconv import CoordinateConv
+from visualDet3D.networks.lib.blocks import ConvBnReLU
+from visualDet3D.networks.detectors.unet.u_net import UNet_Core
+from visualDet3D.networks.heads.monodepth_loss import MonodepthLoss
 
 def preprocess_sum_avg(sum_pred:np.ndarray, num_pred:np.ndarray)->np.ndarray:
     #avg_precompute = sum_pred / num_pred

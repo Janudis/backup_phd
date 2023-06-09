@@ -8,8 +8,8 @@ import torch
 from torch import nn
 import torch.utils.model_zoo as model_zoo
 from typing import Tuple
-from visualDet3D.visualDet3D.networks.utils.registry import BACKBONE_DICT
-
+# from visualDet3D.visualDet3D.networks.utils.registry import BACKBONE_DICT
+from visualDet3D.networks.utils.registry import BACKBONE_DICT
 BatchNorm = nn.BatchNorm2d
 
 WEB_ROOT = 'http://dl.yf.io/dla/models'

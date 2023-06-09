@@ -5,13 +5,21 @@ import torch
 import math
 import time
 from torchvision.ops import nms
-from visualDet3D.visualDet3D.networks.utils import DETECTOR_DICT
-from visualDet3D.visualDet3D.networks.detectors.KM3D_core import KM3DCore
-from visualDet3D.visualDet3D.networks.heads.km3d_head import KM3DHead
-from visualDet3D.visualDet3D.networks.heads.monoflex_head import MonoFlexHead
-from visualDet3D.visualDet3D.networks.lib.blocks import AnchorFlatten
-from visualDet3D.visualDet3D.networks.lib.look_ground import LookGround
-from visualDet3D.visualDet3D.networks.lib.ops.dcn.deform_conv import DeformConv
+# from visualDet3D.visualDet3D.networks.utils import DETECTOR_DICT
+# from visualDet3D.visualDet3D.networks.detectors.KM3D_core import KM3DCore
+# from visualDet3D.visualDet3D.networks.heads.km3d_head import KM3DHead
+# from visualDet3D.visualDet3D.networks.heads.monoflex_head import MonoFlexHead
+# from visualDet3D.visualDet3D.networks.lib.blocks import AnchorFlatten
+# from visualDet3D.visualDet3D.networks.lib.look_ground import LookGround
+# from visualDet3D.visualDet3D.networks.lib.ops.dcn.deform_conv import DeformConv
+
+from visualDet3D.networks.utils import DETECTOR_DICT
+from visualDet3D.networks.detectors.KM3D_core import KM3DCore
+from visualDet3D.networks.heads.km3d_head import KM3DHead
+from visualDet3D.networks.heads.monoflex_head import MonoFlexHead
+from visualDet3D.networks.lib.blocks import AnchorFlatten
+from visualDet3D.networks.lib.look_ground import LookGround
+from visualDet3D.networks.lib.ops.dcn.deform_conv import DeformConv
 
 @DETECTOR_DICT.register_module
 class KM3D(nn.Module):

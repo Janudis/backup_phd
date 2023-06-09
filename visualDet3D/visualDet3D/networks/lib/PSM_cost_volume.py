@@ -8,7 +8,8 @@ import torch.nn as nn
 import torch.nn.functional as F
 import torch.optim as optim
 from torch.autograd import Variable
-from visualDet3D.visualDet3D.utils.timer import profile
+# from visualDet3D.visualDet3D.utils.timer import profile
+from visualDet3D.utils.timer import profile
 def make_grid(grid_shape):
     
     #grid: (y, x, z)

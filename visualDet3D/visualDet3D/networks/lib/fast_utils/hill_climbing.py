@@ -3,7 +3,8 @@ import math
 import numpy as np
 from .bbox3d import project_3d
 from .bbox2d import iou_2d
-from visualDet3D.visualDet3D.utils.utils import convertAlpha2Rot, convertRot2Alpha
+#from visualDet3D.visualDet3D.utils.utils import convertAlpha2Rot, convertRot2Alpha
+from visualDet3D.utils.utils import convertAlpha2Rot, convertRot2Alpha
 def post_opt(bbox_2d, bbox3d_state_3d, P2, cx, cy):
     """
         run hill climbing algorithm

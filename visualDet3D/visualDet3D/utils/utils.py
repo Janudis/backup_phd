@@ -7,6 +7,7 @@ import tempfile
 import shutil
 import importlib
 from easydict import EasyDict
+
 class LossLogger():
     def __init__(self, recorder, data_split='train'):
         self.recorder = recorder

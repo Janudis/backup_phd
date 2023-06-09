@@ -1,6 +1,12 @@
 """
     Script for launching training process
 """
+# import torch
+# print("CUDA available: ", torch.cuda.is_available())
+# print("Number of CUDA devices: ", torch.cuda.device_count())
+# from numba import cuda
+# print(cuda.gpus)
+
 import os
 import sys
 import numpy as np
@@ -22,7 +28,7 @@ from visualDet3D.utils.timer import Timer
 from visualDet3D.utils.utils import LossLogger, cfg_from_file
 from visualDet3D.networks.optimizers import optimizers, schedulers
 from visualDet3D.data.dataloader import build_dataloader
-
+import pickle
 def main(config="config/config.py", experiment_name="default", world_size=1, local_rank=-1):
     """Main function for the training script.
 
@@ -32,7 +38,7 @@ def main(config="config/config.py", experiment_name="default", world_size=1, loc
         world_size (int): Number of total subprocesses in distributed training. 
         local_rank: Rank of the process. Should not be manually assigned. 0-N for ranks in distributed training (only process 0 will print info and perform testing). -1 for single training. 
     """
-
+    data = pickle.load(open("/home/dimitris/PhD/PhD/visualDet3D/workdirs/Mono3D/output/training/imdb.pkl", 'rb'))    
     ## Get config
     cfg = cfg_from_file(config)
 
@@ -74,7 +80,7 @@ def main(config="config/config.py", experiment_name="default", world_size=1, loc
     ## define datasets and dataloader.
     dataset_train = DATASET_DICT[cfg.data.train_dataset](cfg)
     dataset_val = DATASET_DICT[cfg.data.val_dataset](cfg, "validation")
-
+    #print(dataset_train)
     dataloader_train = build_dataloader(dataset_train,
                                         num_workers=cfg.data.num_workers,
                                         batch_size=cfg.data.batch_size,
@@ -147,6 +153,8 @@ def main(config="config/config.py", experiment_name="default", world_size=1, loc
         if training_loss_logger:
             training_loss_logger.reset()
         for iter_num, data in enumerate(dataloader_train):
+            # print(f"iter: {iter_num}")
+            # print(f"data: {data}")
             training_dection(data, detector, optimizer, writer, training_loss_logger, global_step, epoch_num, cfg)
 
             global_step += 1

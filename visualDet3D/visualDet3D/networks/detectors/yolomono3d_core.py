@@ -3,7 +3,8 @@ import torch.nn as nn
 import torch
 import math
 import time
-from visualDet3D.visualDet3D.networks.backbones import resnet
+# from visualDet3D.visualDet3D.networks.backbones import resnet
+from visualDet3D.networks.backbones import resnet
 
 
 class YoloMono3DCore(nn.Module):

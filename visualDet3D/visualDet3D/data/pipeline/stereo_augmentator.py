@@ -19,10 +19,15 @@ import sys
 from easydict import EasyDict
 from typing import List
 from matplotlib import pyplot as plt
-from visualDet3D.visualDet3D.networks.utils.utils import BBox3dProjector
-from visualDet3D.visualDet3D.utils.utils import draw_3D_box, theta2alpha_3d
-from visualDet3D.visualDet3D.networks.utils.registry import AUGMENTATION_DICT
-from visualDet3D.visualDet3D.data.kitti.kittidata import KittiObj
+# from visualDet3D.visualDet3D.networks.utils.utils import BBox3dProjector
+# from visualDet3D.visualDet3D.utils.utils import draw_3D_box, theta2alpha_3d
+# from visualDet3D.visualDet3D.networks.utils.registry import AUGMENTATION_DICT
+# from visualDet3D.visualDet3D.data.kitti.kittidata import KittiObj
+
+from visualDet3D.networks.utils.utils import BBox3dProjector
+from visualDet3D.utils.utils import draw_3D_box, theta2alpha_3d
+from visualDet3D.networks.utils.registry import AUGMENTATION_DICT
+from visualDet3D.data.kitti.kittidata import KittiObj
 import torch
 from .augmentation_builder import Compose, build_single_augmentator
 

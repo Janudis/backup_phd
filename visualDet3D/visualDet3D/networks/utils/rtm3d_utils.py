@@ -4,8 +4,8 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 import torch.optim as optim
-from visualDet3D.visualDet3D.networks.lib.ops.iou3d.iou3d import boxes_iou3d_gpu
-
+# from visualDet3D.visualDet3D.networks.lib.ops.iou3d.iou3d import boxes_iou3d_gpu
+from visualDet3D.networks.lib.ops.iou3d.iou3d import boxes_iou3d_gpu
 def compute_res_loss(output, target):
     return F.smooth_l1_loss(output, target, reduction='elementwise_mean')
 

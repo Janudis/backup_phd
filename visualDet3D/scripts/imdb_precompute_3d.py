@@ -18,17 +18,25 @@ from visualDet3D.utils.utils import cfg_from_file
 def process_train_val_file(cfg):
     train_file = cfg.data.train_split_file
     val_file   = cfg.data.val_split_file
+    print(f"Train file: {train_file}")  # Debug line
+
+# Get the list of converted image names (without extensions)
+    converted_images = [os.path.splitext(img)[0] for img in os.listdir('/home/dimitris/PhD/PhD/nuscenes/nusc_kitti/mini_train/image_2')]
 
     with open(train_file) as f:
         train_lines = f.readlines()
         for i  in range(len(train_lines)):
             train_lines[i] = train_lines[i].strip()
-
+        print(f"Converted images: {converted_images}")
+        print(f"Train lines before filtering: {train_lines}")  # Debug line
+# Only keep lines corresponding to converted images
+    train_lines = [line for line in train_lines if line in converted_images]
     with open(val_file) as f:
         val_lines = f.readlines()
         for i  in range(len(val_lines)):
             val_lines[i] = val_lines[i].strip()
-
+# Only keep lines corresponding to converted images
+    val_lines = [line for line in val_lines if line in converted_images]
     return train_lines, val_lines
 
 def read_one_split(cfg, index_names, data_root_dir, output_dict, data_split = 'training', time_display_inter=100):
@@ -68,7 +76,7 @@ def read_one_split(cfg, index_names, data_root_dir, output_dict, data_split = 't
         uniform_square_each_type = np.zeros((len(cfg.obj_types), 6), dtype=np.float64)
 
     for i, index_name in enumerate(index_names):
-
+        print(f"Processing index_name: {index_name}")
         # read data with dataloader api
         data_frame = KittiData(data_root_dir, index_name, output_dict)
         calib, image, label, velo = data_frame.read_data()
@@ -172,14 +180,15 @@ def read_one_split(cfg, index_names, data_root_dir, output_dict, data_split = 't
             np.save(npy_file, avg)
             std_file = os.path.join(save_dir,'anchor_std_{}.npy'.format(cfg.obj_types[j]))
             np.save(std_file, std)
+    print(f"Frames length: {len(frames)}")         
+    print("Dumping frames into a .pkl file.")  
     pkl_file = os.path.join(save_dir,'imdb.pkl')
     pickle.dump(frames, open(pkl_file, 'wb'))
     print("{} split finished precomputing".format(data_split))
 
 
-
-
-def main(config:str='D:/Python_Projects/self_driving_car/nuscenes-devkit/python-sdk/nuscenes/visualDet3D/config/config.py'):
+# def main(config:str='D:/Python_Projects/self_driving_car/nuscenes-devkit/python-sdk/nuscenes/visualDet3D/config/config.py'):
+def main(config:str='/home/dimitris/PhD/PhD/visualDet3D/config/config.py'):
     cfg = cfg_from_file(config)
     torch.cuda.set_device(cfg.trainer.gpu)
     
@@ -197,6 +206,7 @@ def main(config:str='D:/Python_Projects/self_driving_car/nuscenes-devkit/python-
             }
 
     train_names, val_names = process_train_val_file(cfg)
+    print(f"Train names length: {len(train_names)}, Val names length: {len(val_names)}")
     read_one_split(cfg, train_names, data_root_dir, output_dict, 'training', time_display_inter)
     output_dict = {
                 "calib": True,

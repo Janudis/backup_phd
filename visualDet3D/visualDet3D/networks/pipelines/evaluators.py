@@ -8,13 +8,21 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 import torch.optim as optim
+# from torch.utils.tensorboard import SummaryWriter
+# from visualDet3D.visualDet3D.networks.utils.registry import PIPELINE_DICT
+# from visualDet3D.visualDet3D.evaluator.kitti.evaluate import evaluate
+# from visualDet3D.visualDet3D.evaluator.kitti_depth_prediction.evaluate_depth import evaluate_depth
+# from visualDet3D.visualDet3D.networks.utils.utils import BBox3dProjector, BackProjection
+# from visualDet3D.visualDet3D.data.kitti.utils import write_result_to_file
+# from visualDet3D.visualDet3D.networks.lib.fast_utils.hill_climbing import post_opt
+
 from torch.utils.tensorboard import SummaryWriter
-from visualDet3D.visualDet3D.networks.utils.registry import PIPELINE_DICT
-from visualDet3D.visualDet3D.evaluator.kitti.evaluate import evaluate
-from visualDet3D.visualDet3D.evaluator.kitti_depth_prediction.evaluate_depth import evaluate_depth
-from visualDet3D.visualDet3D.networks.utils.utils import BBox3dProjector, BackProjection
-from visualDet3D.visualDet3D.data.kitti.utils import write_result_to_file
-from visualDet3D.visualDet3D.networks.lib.fast_utils.hill_climbing import post_opt
+from visualDet3D.networks.utils.registry import PIPELINE_DICT
+from visualDet3D.evaluator.kitti.evaluate import evaluate
+from visualDet3D.evaluator.kitti_depth_prediction.evaluate_depth import evaluate_depth
+from visualDet3D.networks.utils.utils import BBox3dProjector, BackProjection
+from visualDet3D.data.kitti.utils import write_result_to_file
+from visualDet3D.networks.lib.fast_utils.hill_climbing import post_opt
 
 @PIPELINE_DICT.register_module
 @torch.no_grad()

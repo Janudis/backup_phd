@@ -1,8 +1,11 @@
 from typing import Callable, List, Union
 import numpy as np
 from easydict import EasyDict
-from visualDet3D.visualDet3D.networks.utils.registry import AUGMENTATION_DICT
-from visualDet3D.visualDet3D.data.kitti.kittidata import KittiObj
+# from visualDet3D.visualDet3D.networks.utils.registry import AUGMENTATION_DICT
+# from visualDet3D.visualDet3D.data.kitti.kittidata import KittiObj
+
+from visualDet3D.networks.utils.registry import AUGMENTATION_DICT
+from visualDet3D.data.kitti.kittidata import KittiObj
 
 def build_single_augmentator(cfg:EasyDict):
     name:str = cfg.type_name
