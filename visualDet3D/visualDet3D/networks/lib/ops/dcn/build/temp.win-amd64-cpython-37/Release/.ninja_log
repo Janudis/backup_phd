@@ -1,0 +1,4 @@
+# ninja log v5
+1	92848	7018768102775939	D:/Python_Projects/self_driving_car/nuscenes-devkit/python-sdk/nuscenes/visualDet3D/visualDet3D/networks/lib/ops/dcn/build/temp.win-amd64-cpython-37/Release/src/cuda/deform_conv_cuda.obj	50088ecb3eaafad5
+197	94527	7018768121005895	D:/Python_Projects/self_driving_car/nuscenes-devkit/python-sdk/nuscenes/visualDet3D/visualDet3D/networks/lib/ops/dcn/build/temp.win-amd64-cpython-37/Release/src/deform_conv_ext.obj	b0585687ac3a68ee
+186	101312	7018768188705847	D:/Python_Projects/self_driving_car/nuscenes-devkit/python-sdk/nuscenes/visualDet3D/visualDet3D/networks/lib/ops/dcn/build/temp.win-amd64-cpython-37/Release/src/cuda/deform_conv_cuda_kernel.obj	86a68b9847b03803
