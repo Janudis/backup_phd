@@ -19,7 +19,7 @@ import torch.utils.data
 import sys
 from PIL import Image
 
-sys.path.append('/home/dimitris/PhD/PhD/visualDet3D')
+#sys.path.append('/home/dimitris/PhD/PhD/visualDet3D')
 from visualDet3D.utils.utils import alpha2theta_3d, theta2alpha_3d
 from visualDet3D.data.kitti.kittidata import KittiData, KittiObj, KittiCalib
 from visualDet3D.data.pipeline import build_augmentator
@@ -50,14 +50,13 @@ class KittiMonoDataset(torch.utils.data.Dataset):
         preprocessed_path   = cfg.path.preprocessed_path
         obj_types           = cfg.obj_types
         is_train = (split == 'training')
-
         imdb_file_path = os.path.join(preprocessed_path, split, 'imdb.pkl')
         self.imdb = pickle.load(open(imdb_file_path, 'rb')) # list of kittiData
         self.output_dict = {
                 "calib": False,
                 "image": True,
                 "label": False,
-                "velodyne": False
+                "velodyne": True
             }
         # print(imdb_file_path)
         # print(self.imdb)
@@ -68,7 +67,7 @@ class KittiMonoDataset(torch.utils.data.Dataset):
         self.projector = BBox3dProjector()
         self.is_train = is_train
         self.obj_types = obj_types
-        self.use_right_image = getattr(cfg.data, 'use_right_image', True)
+        self.use_right_image = getattr(cfg.data, 'use_right_image', False)  #False gia training sto nuscenes-mono left image
         self.is_reproject = getattr(cfg.data, 'is_reproject', True) # if reproject 2d
 
     def _reproject(self, P2:np.ndarray, transformed_label:List[KittiObj]) -> Tuple[List[KittiObj], np.ndarray]:
@@ -107,34 +106,59 @@ class KittiMonoDataset(torch.utils.data.Dataset):
 
 
     def __getitem__(self, index):
+        # print("TRAIN-mono_dataset.py")
         kitti_data = self.imdb[index % len(self.imdb)]
+        # print(f"monodataset {kitti_data.label}")
+        # print(f"monodataset {kitti_data.calib.P2}")
+        # print(f"monodataset {kitti_data.velodyne}")
+        # print(f"index {index}")
+        # Check if the first element of the kitti_data matrix is not 1.26641720e+03
         # The calib and label has been preloaded to minimize the time in each indexing
         if index >= len(self.imdb):
             kitti_data.output_dict = {
                 "calib": True,
-                "image": False,
-                "image_3":True,
-                # "image_2":True,
+                "image": False, #anaferete sto image_2 apo false->true gia nuscenes / 30/11 akiro
+                "image_3":True, #apo true -> false gia fine-tune in nuscenes / 30/11 akiro
                 "label": False,
                 "velodyne": False
             }
-            calib, _, image, _, _ = kitti_data.read_data()
-            calib.P2 = calib.P3 # a workaround to use P3 for right camera images. 3D bboxes are the same(cx, cy, z, w, h, l, alpha)
+            # calib, _, image, _, _ = kitti_data.read_data()
+            calib, image, _, _ = kitti_data.read_data() # change for nuscenes finetuning
+            # print(f"calib in get_item {calib}")
+            # calib.P2 = calib.P3 # a workaround to use P3 for right camera images. 3D bboxes are the same(cx, cy, z, w, h, l, alpha) #comment-out for finetuning
         else:
-            kitti_data.output_dict = self.output_dict
-            _, image, _, _ = kitti_data.read_data()
+            kitti_data.output_dict = self.output_dict #edw gemizei to kitti.data
+            _, image, _, pc = kitti_data.read_data()
+            # print(f"calib data: {kitti_data.calib.P2}")  
+            # print(f" image data: {image}") 
+            # print(f" label data: {label}") 
+            # print(f"Point cloud data: {pc}") # Printing the point cloud
+            # print(f"Point cloud data: {pc.T.shape}") # Printing the point cloud
+            # print(pc.reshape(pc.shape[2], pc.shape[1], pc.shape[0]))
+            # print(pc.T)
             calib = kitti_data.calib
+
         calib.image_shape = image.shape
         label = kitti_data.label # label: list of kittiObj
         label = []
+        # print(kitti_data.label)
         for obj in kitti_data.label:
-            if obj.type in self.obj_types:
+            if obj.type in self.obj_types: #ean einai car
                 label.append(obj)
-        transformed_image, transformed_P2, transformed_label = self.transform(image, p2=deepcopy(calib.P2), labels=deepcopy(label))
+        # for obj in label:
+        #     for attr, value in obj.__dict__.items():
+        #         print(attr, ":", value)
+        #     print("-----------------------")
+        # Extracting ry values for each object in transformed_label
+        ry_values = [obj.ry for obj in label]
+        # print(image)
+        # plt.imshow(image)
+        # plt.show() 
+        transformed_image, transformed_P2, transformed_label, transformed_pc = self.transform(image, p2=deepcopy(calib.P2), labels=deepcopy(label), lidar=pc)
         bbox3d_state = np.zeros([len(transformed_label), 7]) #[camera_x, camera_y, z, w, h, l, alpha]
         if len(transformed_label) > 0:
             transformed_label, bbox3d_state = self._reproject(transformed_P2, transformed_label)
-
+        
         bbox2d = np.array([[obj.bbox_l, obj.bbox_t, obj.bbox_r, obj.bbox_b] for obj in transformed_label])
         
         output_dict = {'calib': transformed_P2,
@@ -143,7 +167,14 @@ class KittiMonoDataset(torch.utils.data.Dataset):
                        'bbox2d': bbox2d, #[N, 4] [x1, y1, x2, y2]
                        'bbox3d': bbox3d_state, 
                        'original_shape':image.shape,
-                       'original_P':calib.P2.copy()}
+                       'original_P':calib.P2.copy(),
+                       'ground-truth euler angle of 3dbb': ry_values,
+                       'transformed_pc' : transformed_pc} 
+        # print(f"image in mono_dataset.py get_item {transformed_image}")
+        # print(f"calib in mono_dataset.py get_item {transformed_P2}")
+        # print(f"label in mono_dataset.py get_item {[obj.type for obj in transformed_label]}")
+        # print(f"euler in mono_dataset.py get_item {ry_values}")
+        # print(f"transformed_pc {transformed_pc.shape}")
         return output_dict
 
     def __len__(self):
@@ -154,6 +185,7 @@ class KittiMonoDataset(torch.utils.data.Dataset):
 
     @staticmethod
     def collate_fn(batch):
+        # print(f"batch {batch}")
         rgb_images = np.array([item["image"] for item in batch])#[batch, H, W, 3]
         rgb_images = rgb_images.transpose([0, 3, 1, 2])
 
@@ -161,12 +193,19 @@ class KittiMonoDataset(torch.utils.data.Dataset):
         label = [item['label'] for item in batch]
         bbox2ds = [item['bbox2d'] for item in batch]
         bbox3ds = [item['bbox3d'] for item in batch]
+        transformed_pc = [item['transformed_pc'] for item in batch]
+        # print(f"transformed_pc {torch.tensor(transformed_pc[0][0])}")
+        # print(f"transformed_pc {torch.tensor(transformed_pc).shape}")
+        # print(f"transformed_pc {torch.tensor(transformed_pc).T.shape}")
+        # print(f"rgb_images in mono_dataset.py collate {rgb_images}")
+        # print(f"calib in mono_dataset.py collate {torch.tensor(calib).float()}")
         #return torch.from_numpy(rgb_images).float(),  torch.from_numpy(calib).float(), label, bbox2ds, bbox3ds
-        return torch.from_numpy(rgb_images).float(), torch.tensor(calib).float(), label, bbox2ds, bbox3ds
+        return torch.from_numpy(rgb_images).float(), torch.tensor(calib).float(), label, bbox2ds, bbox3ds, transformed_pc
 
 @DATASET_DICT.register_module
 class NuscMonoDataset(KittiMonoDataset):
     def __len__(self):
+        print("NuscMonoDataset")    
         return len(self.imdb)
 
 @DATASET_DICT.register_module
@@ -186,6 +225,7 @@ class KittiMonoTestDataset(KittiMonoDataset):
             }
 
     def __getitem__(self, index):
+        print("TEST")
         kitti_data = self.imdb[index % len(self.imdb)]
         #print("kitti data", kitti_data)
         kitti_data.output_dict = self.output_dict

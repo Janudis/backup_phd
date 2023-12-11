@@ -24,14 +24,16 @@ def test_mono_detection(data, module:nn.Module,
                      global_step:int=None, 
                      cfg:EasyDict=None)-> Tuple[torch.Tensor, torch.Tensor, List[str]]:
     image, P2 = data[0], data[1]
+    # print(f"data {data}")
+
     #print(image.cuda().float().contiguous())
     #print(torch.tensor(P2).cuda().float())
     scores, bbox, obj_index = module(
         [image.cuda().float().contiguous(), P2.clone().detach().cuda().float()])
     #torch.tensor(P2).cuda().float()
-    #print(obj_index)
+    # print(f"index {obj_index}")
     obj_types = [cfg.obj_types[i.item()] for i in obj_index]
-
+    # print(module)
     return scores, bbox, obj_types
 
 @PIPELINE_DICT.register_module  

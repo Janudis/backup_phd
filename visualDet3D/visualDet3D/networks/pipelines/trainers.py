@@ -22,7 +22,7 @@ def train_mono_detection(data, module:nn.Module,
                      cfg:EasyDict=EasyDict()):
     optimizer.zero_grad()
     # load data
-    image, calibs, labels, bbox2d, bbox_3d = data
+    image, calibs, labels, bbox2d, bbox_3d, _ = data
 
     # create compound array of annotation
     max_length = np.max([len(label) for label in labels])

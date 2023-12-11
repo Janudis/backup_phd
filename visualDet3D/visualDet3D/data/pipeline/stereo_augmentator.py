@@ -37,6 +37,7 @@ class ConvertToFloat(object):
     Converts image data type to float.
     """
     def __call__(self, left_image, right_image=None, p2=None, p3=None, labels=None, image_gt=None, lidar=None):
+        # print(f" float p2 {p2}")
         return left_image.astype(np.float32), right_image if right_image is None else right_image.astype(np.float32), p2, p3, labels, image_gt, lidar
 
 
@@ -61,6 +62,7 @@ class Normalize(object):
             right_image -= np.tile(self.mean, int(right_image.shape[2]/self.mean.shape[0]))
             right_image /= np.tile(self.stds, int(right_image.shape[2]/self.stds.shape[0]))
             right_image = right_image.astype(np.float32)
+        # print(f"normalize p2 {p2}")
         return left_image, right_image, p2, p3, labels, image_gt, lidar
 
 
@@ -81,11 +83,15 @@ class Resize(object):
 
         if self.preserve_aspect_ratio:
             scale_factor = self.size[0] / left_image.shape[0]
-
+            # print(f"self.size[0] {self.size[0]}")
+            # print(f"left_image.shape[0] {left_image.shape[0]}")
+            # print(f"self.size[1] {self.size[1]}")
+            # print(f"left_image.shape[1] {left_image.shape[1]}")
             h = np.round(left_image.shape[0] * scale_factor).astype(int)
             w = np.round(left_image.shape[1] * scale_factor).astype(int)
             
             scale_factor_yx = (scale_factor, scale_factor)
+            # print(f"scale_factor_yx {scale_factor_yx}") (512/800, 512/800) 900-100(crop_top) = 800
         else:
             scale_factor_yx = (self.size[0] / left_image.shape[0], self.size[1] / left_image.shape[1])
 
@@ -122,6 +128,8 @@ class Resize(object):
                         image_gt = np.pad(image_gt, [(0, 0), (0, padW), (0, 0)], 'constant')
 
         if p2 is not None:
+            # print(f"p2[0, :] {p2[0, :]}")
+            # print(f"p2[1, :] {p2[1, :]}")
             p2[0, :]   = p2[0, :] * scale_factor_yx[1]
             p2[1, :]   = p2[1, :] * scale_factor_yx[0]
         
@@ -136,6 +144,7 @@ class Resize(object):
                     obj.bbox_r *= scale_factor_yx[1]
                     obj.bbox_t *= scale_factor_yx[0]
                     obj.bbox_b *= scale_factor_yx[0]
+        # print(f"resize p2 {p2}")
         return left_image, right_image, p2, p3, labels, image_gt, lidar
 
 @AUGMENTATION_DICT.register_module
@@ -186,7 +195,7 @@ class ResizeToFx(object):
                     obj.bbox_r *= scale_factor_yx[1]
                     obj.bbox_t *= scale_factor_yx[0]
                     obj.bbox_b *= scale_factor_yx[0]
-
+        # print(f"p2 {p2}")
         return left_image, right_image, p2, p3, labels, image_gt, lidar
 
 @AUGMENTATION_DICT.register_module
@@ -212,11 +221,11 @@ class RandomSaturation(object):
             left_image[:, :, 1] *= ratio
             if right_image is not None:
                 right_image[:, :, 1] *= ratio
-
+        # print(f"p2 {p2}")
         return left_image, right_image, p2, p3, labels, image_gt, lidar
 
 @AUGMENTATION_DICT.register_module
-class CropTop(object):
+class CropTop(object): 
     def __init__(self, crop_top_index=None, output_height=None):
         if crop_top_index is None and output_height is None:
             print("Either crop_top_index or output_height should not be None, set crop_top_index=0 by default")
@@ -258,7 +267,7 @@ class CropTop(object):
                 for obj in labels:
                     obj.bbox_b -= upper
                     obj.bbox_t -= upper
-
+        # print(f"crop top p2 {p2}")
         return left_image, right_image, p2, p3, labels, image_gt, lidar
 
 
@@ -297,7 +306,7 @@ class CropRight(object):
 
         if image_gt is not None:
             image_gt = image_gt[:, lefter:righter]
-
+        # print(f"p2 {p2}")
         return left_image, right_image, p2, p3, labels, image_gt, lidar
 
 @AUGMENTATION_DICT.register_module
@@ -323,7 +332,7 @@ class FilterObject(object):
                         new_labels.append(obj)
         else:
             new_labels = None
-        
+        # print(f"p2 {p2}")
         return left_image, right_image, p2, p3, new_labels, image_gt, lidar
 
 @AUGMENTATION_DICT.register_module
@@ -372,7 +381,7 @@ class RandomCropToWidth(object):
                     obj.bbox_r -= lefter
 
             
-
+        # print(f"p2 {p2}")
         return left_image, right_image, p2, p3, labels, image_gt, lidar
 
 @AUGMENTATION_DICT.register_module
@@ -387,7 +396,7 @@ class RandomMirror(object):
         self.projector = BBox3dProjector()
 
     def __call__(self, left_image, right_image=None, p2=None, p3=None, labels=None, image_gt=None, lidar=None):
-
+    
         _, width, _ = left_image.shape
 
         if random.rand() <= self.mirror_prob:
@@ -438,7 +447,7 @@ class RandomMirror(object):
                 
             if lidar is not None:
                 lidar[:, :, 0] = -lidar[:, :, 0]
-        
+        # print(f"random mirror p2 {p2}")
         return left_image, right_image, p2, p3, labels, image_gt, lidar
 
 @AUGMENTATION_DICT.register_module
@@ -501,7 +510,7 @@ class RandomWarpAffine(object):
                     obj.bbox_r = obj.bbox_r * final_scale + final_shift_w
                     obj.bbox_t = obj.bbox_t * final_scale + final_shift_h
                     obj.bbox_b = obj.bbox_b * final_scale + final_shift_h
-
+        # print(f"p2 {p2}")
         return left_image, right_image, p2, p3, labels, image_gt, lidar
 
 @AUGMENTATION_DICT.register_module
@@ -527,6 +536,7 @@ class RandomHue(object):
                 right_image[:, :, 0] += shift
                 right_image[:, :, 0][right_image[:, :, 0] > 360.0] -= 360.0
                 right_image[:, :, 0][right_image[:, :, 0] < 0.0] += 360.0
+        # print(f"p2 {p2}")
         return left_image, right_image, p2, p3, labels, image_gt, lidar
 
 
@@ -555,7 +565,7 @@ class ConvertColor(object):
 
         else:
             raise NotImplementedError
-
+        # print(f"p2 {p2}")
         return left_image, right_image, p2, p3, labels, image_gt, lidar
 
 
@@ -580,6 +590,7 @@ class RandomContrast(object):
             left_image *= alpha
             if right_image is not None:
                 right_image *= alpha
+        # print(f"p2 {p2}")
         return left_image, right_image, p2, p3, labels, image_gt, lidar
 
 @AUGMENTATION_DICT.register_module
@@ -600,6 +611,7 @@ class RandomBrightness(object):
             left_image += delta
             if right_image is not None:
                 right_image += delta
+        # print(f"p2 {p2}")
         return left_image, right_image, p2, p3, labels, image_gt, lidar
 
 @AUGMENTATION_DICT.register_module
@@ -629,7 +641,7 @@ class RandomEigenvalueNoise(object):
             left_image += noise
             if right_image is not None:
                 right_image += noise
-            
+        # print(f"p2 {p2}")
         return left_image, right_image, p2, p3, labels, image_gt, lidar
 
 @AUGMENTATION_DICT.register_module
@@ -669,7 +681,7 @@ class PhotometricDistort(object):
 
         # compose transformation
         distortion = Compose.from_transforms(distortion)
-
+        # print(f"photometric p2 {p2}")
         return distortion(left_image.copy(), right_image if right_image is None else right_image.copy(), p2, p3, labels, image_gt, lidar)
 
 
@@ -707,6 +719,7 @@ class Augmentation(object):
             ])
 
     def __call__(self, left_image, right_image, p2=None, p3=None, labels=None, image_gt=None, lidar=None):
+        # print(f"p2 {p2}")
         return self.augment(left_image, right_image, p2, p3, labels, image_gt, lidar)
 
 
@@ -733,7 +746,7 @@ class Preprocess(object):
         left_image, right_image, p2, p3, labels, image_gt, lidar = self.preprocess(left_image, right_image, p2, p3, labels, image_gt, lidar)
 
         #img = np.transpose(img, [2, 0, 1])
-
+        # print(f"p2 {p2}")
         return left_image, right_image, p2, p3, labels, image_gt, lidar
 
 @AUGMENTATION_DICT.register_module
@@ -754,6 +767,6 @@ class Shuffle(object):
 
         for index in shuffled_indexes:
             left_image, right_image, p2, p3, labels, image_gt, lidar = self.transforms[index](left_image, right_image, p2, p3, labels, image_gt, lidar)
-        
+        # print(f"p2 {p2}")
         return left_image, right_image, p2, p3, labels, image_gt, lidar
 

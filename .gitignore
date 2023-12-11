@@ -1,0 +1,6 @@
+visualDet3D/data/
+*.pth
+/data/
+/nusc_kitti/
+/nusc_kitti_mini/
+

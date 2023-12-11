@@ -1,19 +1,19 @@
 import sys
-sys.path.append('/home/dimitris/PhD/PhD')
-
+sys.path.append('/home/dimitris/PhD/PhD/visualDet3D')
+sys.path.append('/home/dimitris/PhD/PhD/nuscenes')
 from PIL import Image
 import os
 import numpy as np
 import matplotlib.pyplot as plt
 import torch
 import torch.nn as nn
-from nuscenes.devkit_dataloader.Dataloader import *
-from visualDet3D.visualDet3D.data.kitti.utils import write_result_to_file
-from visualDet3D.visualDet3D.utils.utils import LossLogger, cfg_from_file
-from visualDet3D.visualDet3D.networks.utils.registry import DETECTOR_DICT, DATASET_DICT, PIPELINE_DICT
-from visualDet3D.visualDet3D.networks.lib.fast_utils.hill_climbing import post_opt
-from visualDet3D.visualDet3D.networks.utils import BBox3dProjector, BackProjection
-from visualDet3D.visualDet3D.data.pipeline import build_augmentator
+from devkit_dataloader.Dataloader import *
+from visualDet3D.data.kitti.utils import write_result_to_file
+from visualDet3D.utils.utils import LossLogger, cfg_from_file
+from visualDet3D.networks.utils.registry import DETECTOR_DICT, DATASET_DICT, PIPELINE_DICT
+from visualDet3D.networks.lib.fast_utils.hill_climbing import post_opt
+from visualDet3D.networks.utils import BBox3dProjector, BackProjection
+from visualDet3D.data.pipeline import build_augmentator
 
 cfg = cfg_from_file('/home/dimitris/PhD/PhD/visualDet3D/config/config.py')
 checkpoint_name = '/home/dimitris/PhD/PhD/visualDet3D/workdirs/Mono3D/checkpoint/GroundAware_pretrained.pth'
@@ -38,19 +38,18 @@ test_func = PIPELINE_DICT[cfg.trainer.test_func]
 projector = BBox3dProjector().cuda()
 backprojector = BackProjection().cuda()
 
-input_image = Image.open('/home/dimitris/PhD/PhD/visualDet3D/data/testing/image_2/000001.png')
-image = np.array(input_image)
-calib = dict()
-path = '/home/dimitris/PhD/PhD/visualDet3D/data/testing/calib/000001.txt'
-with open(path) as f:
-    str_list = f.readlines()
-str_list = [itm.rstrip() for itm in str_list if itm != '\n']
-for itm in str_list:
-    calib[itm.split(':')[0]] = itm.split(':')[1]
-for k, v in calib.items():
-    calib[k] = [float(itm) for itm in v.split()]
-calibr = np.array(calib['P2']).reshape(3,4)
-
+# input_image = Image.open('/home/dimitris/PhD/PhD/visualDet3D/data/testing/image_2/000001.png')
+# image = np.array(input_image)
+# calib = dict()
+# path = '/home/dimitris/PhD/PhD/visualDet3D/data/testing/calib/000001.txt'
+# with open(path) as f:
+#     str_list = f.readlines()
+# str_list = [itm.rstrip() for itm in str_list if itm != '\n']
+# for itm in str_list:
+#     calib[itm.split(':')[0]] = itm.split(':')[1]
+# for k, v in calib.items():
+#     calib[k] = [float(itm) for itm in v.split()]
+# calibr = np.array(calib['P2']).reshape(3,4)
 # input_image = Image.open('D:/Python_Projects/self_driving_car/nuscenes-devkit/python-sdk/nuscenes/visualDet3D/data/testing/image_2/000001.png')
 # image = np.array(input_image)
 # calib = dict()
@@ -65,14 +64,14 @@ calibr = np.array(calib['P2']).reshape(3,4)
 # calibr = np.array(calib['P2']).reshape(3,4)
 
 nusc_dataset = NuscenesDataset(nusc)
-input_image = nusc_dataset.__getitem__(0)
+input_image, _ = nusc_dataset.__getitem__(52)
 image = np.array(input_image)
-calibr = nusc_dataset.get_calib(0)
-print("Shape of image array: ", image.shape)
-print("Data type: ", image.dtype)
-print("Max value: ", np.max(image))
-print("Min value: ", np.min(image))
-print("Mean value: ", np.mean(image))
+calibr = nusc_dataset.get_calib(52)
+# print("Shape of image array: ", image.shape)
+# print("Data type: ", image.dtype)
+# print("Max value: ", np.max(image))
+# print("Min value: ", np.min(image))
+# print("Mean value: ", np.mean(image))
 
 def collate_fn(batch):
     rgb_images = np.array([item["image"] for item in batch]) #[batch, H, W, 3]
@@ -95,15 +94,16 @@ transformed_P2 = collated_data[1]
 # height = collated_data[0].shape[2]
 # scale_2d = (original_height - cfg.data.augmentation.crop_top) / height
 
-print(collated_data)
-print("Shape of image tensor: ", transformed_image.shape)
-print("Data type: ", transformed_image.dtype)
-print("Max value: ", torch.max(transformed_image))
-print("Min value: ", torch.min(transformed_image))
-print("Mean value: ", torch.mean(transformed_image))
+# print(collated_data)
+# print("Shape of image tensor: ", transformed_image.shape)
+# print("Data type: ", transformed_image.dtype)
+# print("Max value: ", torch.max(transformed_image))
+# print("Min value: ", torch.min(transformed_image))
+# print("Mean value: ", torch.mean(transformed_image))
+
 with torch.no_grad():
     scores, bbox, obj_names = test_func(collated_data, detector, None, cfg=cfg) 
-    print(scores)
+    #print(scores)
     transformed_P2 = transformed_P2[0] 
     bbox_2d = bbox[:, 0:4]
     bbox_3d_state = bbox[:, 4:] #[cx,cy,z,w,h,l,alpha]
@@ -120,12 +120,74 @@ with torch.no_grad():
         obj['type_name'] = obj_names[i]
         obj['xyz'] = bbox_3d_state_3d[i, 0:3]
         objects.append(obj)
-print(objects)
+#print(objects)
 
-# [{'whl': tensor([1.6292, 1.5660, 4.5354], device='cuda:0'), 'theta': tensor(-0.2489, device='cuda:0'), 'score': 
-#   tensor(0.9961, device='cuda:0'), 'type_name': 'Car', 'xyz': tensor([-9.1681,  0.9484, 18.3366], device='cuda:0')}, 
-#   {'whl': tensor([1.7288, 1.6186, 4.1517], device='cuda:0'), 'theta': tensor(0.7109, device='cuda:0'), 
-#    'score': tensor(0.9540, device='cuda:0'), 'type_name': 'Car', 'xyz': tensor([-8.2275,  0.7891, 11.9172], device='cuda:0')}]
+def is_inside_box(points, bbox):
+    cx, cy, z, w, h, l, theta = obj['xyz'][0], obj['xyz'][1] ,obj['xyz'][2], obj['whl'][0], obj['whl'][1], obj['whl'][2], obj['theta']
+    # Create a rotation matrix
+    R = torch.tensor([
+        [torch.sin(theta), 0, torch.cos(theta)],
+        [0, 1, 0],
+        [torch.cos(theta), 0, -torch.sin(theta)],
+    ], device=points.device)  # Create tensor on the same device as points
+    rotated_points = torch.matmul(R.T, (points - torch.tensor([cx, cy, z], device=points.device).reshape((3, 1))))
+    inside = torch.abs(rotated_points[0, :]) <= w/2
+    inside &= torch.abs(rotated_points[1, :]) <= h/2
+    inside &= torch.abs(rotated_points[2, :]) <= l/2
+    return inside
+
+z_local = []
+z_dim = []
+z_class = []
+points, lidar_point, original_points_leading_to_points = nusc_dataset.get_points(52)
+# Assuming lidar_points is a tensor
+lidar_points = torch.tensor(original_points_leading_to_points)
+# Move lidar_points to GPU if not already
+lidar_points = lidar_points.to('cuda:0')
+#print(lidar_points.shape) #torch.Size([3, 34688])
+inside_any_box = torch.zeros(lidar_points.shape[1], dtype=torch.bool, device=lidar_points.device)
+
+for obj in objects: 
+    inside_this_box = is_inside_box(lidar_points, obj)
+    inside_any_box |= inside_this_box  # Update the mask
+
+    if inside_this_box.any():  # If any points are inside this box
+        l = lidar_points[:, inside_this_box].T
+        result = l - obj['xyz']
+        z_local.append(result)
+        whl = obj['whl'].unsqueeze(0).repeat(result.shape[0], 1)  # Repeat to match the number of points
+        z_dim.append(whl)
+        z_class.append(torch.ones(result.shape[0], device=lidar_points.device))  # Ones for points inside a box
+
+# Handle points outside all boxes
+outside_all_boxes = ~inside_any_box  # Points not inside any box
+if outside_all_boxes.any():  # If any points are outside all boxes
+    l = torch.zeros((torch.sum(outside_all_boxes), 3), device=lidar_points.device)
+    z_local.append(l)  # Keep the points as they are
+    z_dim.append(torch.zeros((l.shape[0], 3), device=lidar_points.device))  # Zeros for points outside all boxes
+    z_class.append(torch.zeros(l.shape[0], device=lidar_points.device))  # Zeros for points outside all boxes
+
+z_local = torch.cat(z_local, dim=0)
+z_dim = torch.cat(z_dim, dim=0)
+z_class = torch.cat(z_class, dim=0)
+#print(z_local.shape, z_dim.shape, z_class.shape) #torch.Size([2996, 3]) torch.Size([2996, 3]) torch.Size([2996])
+# print(z_local[99])
+# print(z_dim[99])
+# print(z_class[99])
+
+z_class = z_class.unsqueeze(1)  # Adds an extra dimension, making the shape [34688, 1]
+# Now all tensors have two dimensions, we can concatenate them
+z_box = torch.cat((z_local, z_dim, z_class), dim=1)
+#print(z_box.shape)  #from [34688, 7] to torch.Size([2996, 7])
+#print(z_box)
+
+sys.path.append('/home/dimitris/PhD/PhD/vrn_encoder')
+from test_vrn import *
+z_image = process_data(52)
+z = torch.cat((z_box, z_image), 1)
+print(z)
+
+
 
 # from scipy.spatial.transform import Rotation 
 # whl = objects[0]['whl']

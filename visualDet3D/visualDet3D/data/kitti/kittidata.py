@@ -46,7 +46,6 @@ class KittiCalib:
         Tr_velo_to_cam[0:3, :] = np.array(self.data['Tr_velo_to_cam']).reshape(3, 4)
         Tr_velo_to_cam[3, 3] = 1
         self.Tr_velo_to_cam = Tr_velo_to_cam
-
         return self
     
     def leftcam2lidar(self, pts):
@@ -243,9 +242,13 @@ class KittiData:
         image = read_image(self.image2_path) if self.output_dict["image"] else None
         label = KittiLabel(self.label2_path).read_label_file() if self.output_dict["label"] else None
         pc = read_pc_from_bin(self.velodyne_path) if self.output_dict["velodyne"] else None
+        # print(f"self.velodyne_path {self.velodyne_path}")
+        # print(f"kittidata {pc}")
+        # print(f"kittidata {calib}")
+        # print(f"kittidata {image}")
+        # print(f"kittidata {label}")
         if 'image_3' in self.output_dict and self.output_dict['image_3']:
             image_3 = read_image(self.image3_path) if self.output_dict["image_3"] else None
-
             return calib, image, image_3, label, pc
         else:
             return calib, image, label, pc
